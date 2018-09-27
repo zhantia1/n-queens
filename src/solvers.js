@@ -46,6 +46,8 @@ window.findNRooksSolution = function(n) {
   return solution.rows();
 };
 
+// Above is quadratic O(n^2)
+
 // window.findNRooksSolution = function(n) {
   
 //   var solution;
@@ -107,6 +109,7 @@ window.countNRooksSolutions = function(n) {
 
 }; 
 
+// Above is Linear. O(n);
 
 // window.countNRooksSolutions = function(n) {
 //   var solutionCount = 0; //fixme
@@ -215,8 +218,12 @@ window.findNQueensSolution = function(n) {
   var solution; //fixme
   var storedItems = {};
   
-  let helper = (board, rowIndex = 0, colIndex = 0, piecesUsed = {}) => {
+  let helper = (board, rowIndex = 0, piecesUsed = {}) => {
     let rows = board.rows();
+    
+    if (solution) {
+      return;
+    }
     
     if (n === 0) {
       solution = board;
@@ -225,7 +232,12 @@ window.findNQueensSolution = function(n) {
     
     for (var i = rowIndex; i < rows.length; i++) {
       let row = rows[i];
-      for (var j = colIndex; j < row.length; j++) {
+      for (var j = 0; j < row.length; j++) {
+        // if (colIndex[j]) {
+        //   continue;
+        // } else {
+        //   colIndex[j] = j;
+        // }
         board.togglePiece(i, j);
         if (board.hasAnyQueenConflictsOn(i, j)) {
           board.togglePiece(i, j);
@@ -251,7 +263,8 @@ window.findNQueensSolution = function(n) {
           return;
         }
         var newPiecesUsed = Object.assign({}, piecesUsed);
-        helper(board, i + 1, 0, newPiecesUsed);
+        // var newColIndex = Object.assign({}, colIndex);
+        helper(board, i + 1, newPiecesUsed);
         delete piecesUsed[toggle];
         board.togglePiece(i, j);
       }
@@ -261,13 +274,15 @@ window.findNQueensSolution = function(n) {
   helper(board);
 
   if (solution === undefined) {
-    var solution = new Board({'n': n});
+    solution = new Board({'n': n});
     return solution.rows();  
   }
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution.rows();
 };
+
+// Above is exponential O(e^n)
 
 // // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
@@ -322,3 +337,5 @@ window.countNQueensSolutions = function(n) {
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
+
+// Above is exponential O(e^n)
