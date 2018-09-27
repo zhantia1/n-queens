@@ -49,10 +49,19 @@
         this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex, colIndex))
       );
     },
+    
+    hasAnyQueenConflictsAt: function(rowIndex, colIndex) {
+      return (
+        this.hasColConflictAt(colIndex) ||
+        this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, colIndex)) ||
+        this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex, colIndex))
+      );
+    },
 
     hasAnyQueensConflicts: function() {
       return this.hasAnyRooksConflicts() || this.hasAnyMajorDiagonalConflicts() || this.hasAnyMinorDiagonalConflicts();
     },
+    
 
     _isInBounds: function(rowIndex, colIndex) {
       return (
@@ -236,6 +245,26 @@
         }
       }
       return false; // fixme
+    },
+    
+    // FLIPS THE BOARD ON THE X AXIS
+    
+    flipX: function() {
+      const rows = this.rows();
+      const length = rows.length - 1;
+      let toggled = {};
+      for (var i = 0; i < rows.length; i++) {
+        let row = rows[i];
+        for ( var j = 0; j < row.length; j++) {
+          var toggles = i.toString()+j.toString();
+          if(row[j] === 1 && !toggled[toggles]) {
+            this.togglePiece(i, j);
+            this.togglePiece(length - i, j);
+            toggles = (length-i).toString()+j.toString();
+            toggled[toggles] = true;
+          }
+        }
+      }
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/

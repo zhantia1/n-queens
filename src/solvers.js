@@ -284,13 +284,74 @@ window.findNQueensSolution = function(n) {
 
 // Above is exponential O(e^n)
 
-// // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
+// return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
+// window.countNQueensSolutions = function(n) {
+//   var solutionCount = 0; //fixme
+//   let board = new Board({'n': n});
+//   var storedItems = {};
+
+//   let helper = (board, rowIndex = 0, piecesUsed = {}) => {
+//     let rows = board.rows();
+    
+//     if (n === 0) {
+//       solutionCount = 1;
+//       return;
+//     }
+    
+//     if (n === 2 || n === 3) {
+//       return;
+//     }
+    
+//     for (var i = rowIndex; i < rows.length; i++) {
+//       let row = rows[i];
+//       for (var j = 0; j < row.length; j++) {
+//         board.togglePiece(i, j);
+//         if (board.hasAnyQueenConflictsOn(i, j)) {
+//           board.togglePiece(i, j);
+//           continue;
+//         }
+//         var store = board.rows().toString();
+//         if (storedItems[store]) {
+//           return;
+//         } else {
+//           storedItems[store] = store;
+//         }
+//         // var newBoard = new Board({'n': n});
+//         var toggle = i.toString() + j.toString();
+//         piecesUsed[toggle] = [i, j];
+//         var keyCount = 0;
+//         for (var key in piecesUsed) {
+//           // newBoard.togglePiece(piecesUsed[key][0], piecesUsed[key][1]);
+//           keyCount++;
+//         }
+//         // console.log(keyCount);
+//         if (keyCount === n) {
+//           solutionCount++;
+//         }
+//         var newPiecesUsed = Object.assign({}, piecesUsed);
+//         helper(board, i + 1, newPiecesUsed);
+//         delete piecesUsed[toggle];
+//         board.togglePiece(i, j);
+//       }
+//     } 
+//   };
+
+//   helper(board);
+
+//   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+//   return solutionCount;
+// };
+
+//Above is exponential O(e^n)
+
 window.countNQueensSolutions = function(n) {
   var solutionCount = 0; //fixme
   let board = new Board({'n': n});
   var storedItems = {};
 
-  let helper = (board, rowIndex = 0, colIndex = 0, piecesUsed = {}) => {
+
+
+  let helper = (board, rowIndex = 0, piecesUsed = {}) => {
     let rows = board.rows();
     
     if (n === 0) {
@@ -298,26 +359,38 @@ window.countNQueensSolutions = function(n) {
       return;
     }
     
+    if (n === 2 || n === 3) {
+      return;
+    }
+    
+    
     for (var i = rowIndex; i < rows.length; i++) {
       let row = rows[i];
-      for (var j = colIndex; j < row.length; j++) {
+      var colCheck = 0;
+      for (var j = 0; j < row.length; j++) {
         board.togglePiece(i, j);
-        if (board.hasAnyQueenConflictsOn(i, j)) {
+        if (board.hasAnyQueenConflictsAt(i, j)) {
           board.togglePiece(i, j);
+          if (j === row.length - 1) {
+            if (colCheck === 0) {
+              return;
+            }
+          }
           continue;
         }
+        colCheck++;
         var store = board.rows().toString();
         if (storedItems[store]) {
           return;
         } else {
           storedItems[store] = store;
         }
-        var newBoard = new Board({'n': n});
+        // var newBoard = new Board({'n': n});
         var toggle = i.toString() + j.toString();
         piecesUsed[toggle] = [i, j];
         var keyCount = 0;
         for (var key in piecesUsed) {
-          newBoard.togglePiece(piecesUsed[key][0], piecesUsed[key][1]);
+          // newBoard.togglePiece(piecesUsed[key][0], piecesUsed[key][1]);
           keyCount++;
         }
         // console.log(keyCount);
@@ -325,7 +398,7 @@ window.countNQueensSolutions = function(n) {
           solutionCount++;
         }
         var newPiecesUsed = Object.assign({}, piecesUsed);
-        helper(board, i + 1, 0, newPiecesUsed);
+        helper(board, i + 1, newPiecesUsed);
         delete piecesUsed[toggle];
         board.togglePiece(i, j);
       }
@@ -338,4 +411,21 @@ window.countNQueensSolutions = function(n) {
   return solutionCount;
 };
 
-// Above is exponential O(e^n)
+
+// window.countNQueensSolutions = function(n) {
+//   var solutionCount = 0;
+//   let board = new Board({'n': n});
+//   var storedItems = {};
+  
+//   var oneSolution = findNQueensSolution(n);
+  
+//   var helper = function(row, column) {
+      
+//   }
+  
+//   board.flipX();
+  
+
+//   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+//   return solutionCount;
+// };
