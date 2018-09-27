@@ -260,7 +260,7 @@ window.findNQueensSolution = function(n) {
         // console.log(keyCount);
         if (keyCount === n) {
           solution = newBoard;
-          return;
+          return;  
         }
         var newPiecesUsed = Object.assign({}, piecesUsed);
         // var newColIndex = Object.assign({}, colIndex);
@@ -351,7 +351,7 @@ window.countNQueensSolutions = function(n) {
 
 
 
-  let helper = (board, rowIndex = 0, piecesUsed = {}) => {
+  let helper = (board, rowIndex = 0, piecesUsed = {}, colCheck = {}, majCheck = {}, minCheck = {}) => {
     let rows = board.rows();
     
     if (n === 0) {
@@ -366,19 +366,27 @@ window.countNQueensSolutions = function(n) {
     
     for (var i = rowIndex; i < rows.length; i++) {
       let row = rows[i];
-      var colCheck = 0;
+      var colCount = 0;
       for (var j = 0; j < row.length; j++) {
+        var maj = board._getFirstRowColumnIndexForMajorDiagonalOn(i, j);
+        var min = board._getFirstRowColumnIndexForMinorDiagonalOn(i, j);
+        if (colCheck[j] || majCheck[maj] || minCheck[min]) {
+          continue;
+        }
         board.togglePiece(i, j);
         if (board.hasAnyQueenConflictsAt(i, j)) {
           board.togglePiece(i, j);
           if (j === row.length - 1) {
-            if (colCheck === 0) {
+            if (colCount === 0) {
               return;
             }
           }
           continue;
         }
-        colCheck++;
+        colCheck[j] = j;
+        majCheck[maj] = maj;
+        minCheck[min] = min;
+        colCount++;
         var store = board.rows().toString();
         if (storedItems[store]) {
           return;
@@ -398,8 +406,10 @@ window.countNQueensSolutions = function(n) {
           solutionCount++;
         }
         var newPiecesUsed = Object.assign({}, piecesUsed);
-        helper(board, i + 1, newPiecesUsed);
+        var newColCheck = Object.assign({}, colCheck);
+        helper(board, i + 1, newPiecesUsed, newColCheck);
         delete piecesUsed[toggle];
+        delete colCheck[j];
         board.togglePiece(i, j);
       }
     } 
@@ -411,17 +421,39 @@ window.countNQueensSolutions = function(n) {
   return solutionCount;
 };
 
+// window.findUnqiueSolution = function(n, i, j, solutionCount) {
+//   let board = Board({'n': n});
+//   //board.togglePiece(toggleRow, toggleColumn);
+//   let rows = board.rows();
+//   let solution;
+  
+//   // for (var i = 0; i < rows.length; i++) {
+//   //   let row = rows[i];
+//   //   for (var j = 0; i < row.length; j++) {
+//   //     if (i === toggleRow && j === toggleColumn) {
+//   //       continue;
+//   //     }
+//   //     board.togglePiece(i, j);
+//   //     if (board.hasAnyQueenConflictsAt(i, j)) {
+//   //       board.togglePiece(i, j);
+//   //       continue;
+//   //     }
+//   //   }
+//   while(!solution) {
+//     let row = rows[i];
+//     if(row[j])
+//   }
+  
+// }
+
 
 // window.countNQueensSolutions = function(n) {
 //   var solutionCount = 0;
 //   let board = new Board({'n': n});
 //   var storedItems = {};
   
-//   var oneSolution = findNQueensSolution(n);
+//   var oneSolution = findUnqiueSolution(n, 1);
   
-//   var helper = function(row, column) {
-      
-//   }
   
 //   board.flipX();
   
