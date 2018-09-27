@@ -271,7 +271,53 @@ window.findNQueensSolution = function(n) {
 
 // // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0; //fixme
+  let board = new Board({'n': n});
+  var storedItems = {};
+
+  let helper = (board, rowIndex = 0, colIndex = 0, piecesUsed = {}) => {
+    let rows = board.rows();
+    
+    if (n === 0) {
+      solutionCount = 1;
+      return;
+    }
+    
+    for (var i = rowIndex; i < rows.length; i++) {
+      let row = rows[i];
+      for (var j = colIndex; j < row.length; j++) {
+        board.togglePiece(i, j);
+        if (board.hasAnyQueenConflictsOn(i, j)) {
+          board.togglePiece(i, j);
+          continue;
+        }
+        var store = board.rows().toString();
+        if (storedItems[store]) {
+          return;
+        } else {
+          storedItems[store] = store;
+        }
+        var newBoard = new Board({'n': n});
+        var toggle = i.toString() + j.toString();
+        piecesUsed[toggle] = [i, j];
+        var keyCount = 0;
+        for (var key in piecesUsed) {
+          newBoard.togglePiece(piecesUsed[key][0], piecesUsed[key][1]);
+          keyCount++;
+        }
+        // console.log(keyCount);
+        if (keyCount === n) {
+          solutionCount++;
+        }
+        var newPiecesUsed = Object.assign({}, piecesUsed);
+        helper(board, i + 1, 0, newPiecesUsed);
+        delete piecesUsed[toggle];
+        board.togglePiece(i, j);
+      }
+    } 
+  };
+
+  helper(board);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
