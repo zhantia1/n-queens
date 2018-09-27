@@ -218,7 +218,7 @@ window.findNQueensSolution = function(n) {
   var solution; //fixme
   var storedItems = {};
   
-  let helper = (board, rowIndex = 0, piecesUsed = {}) => {
+  let helper = (board, rowIndex = 0, piecesUsed = {}, colCheck = {}, majCheck = {}, minCheck = {}) => {
     let rows = board.rows();
     
     if (solution) {
@@ -233,16 +233,19 @@ window.findNQueensSolution = function(n) {
     for (var i = rowIndex; i < rows.length; i++) {
       let row = rows[i];
       for (var j = 0; j < row.length; j++) {
-        // if (colIndex[j]) {
-        //   continue;
-        // } else {
-        //   colIndex[j] = j;
-        // }
+        var maj = board._getFirstRowColumnIndexForMajorDiagonalOn(i, j);
+        var min = board._getFirstRowColumnIndexForMinorDiagonalOn(i, j);
+        if (colCheck[j] || majCheck[maj] || minCheck[min]) {
+          continue;
+        }
         board.togglePiece(i, j);
         if (board.hasAnyQueenConflictsOn(i, j)) {
           board.togglePiece(i, j);
           continue;
         }
+        colCheck[j] = j;
+        majCheck[maj] = maj;
+        minCheck[min] = min;
         var store = board.rows().toString();
         if (storedItems[store]) {
           return;
